@@ -1,0 +1,1 @@
+INSERT INTO categories (category) VALUES ('travel'), ('food'), ('toiletries'), ('communication');

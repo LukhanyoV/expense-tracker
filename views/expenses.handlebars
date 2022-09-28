@@ -1,0 +1,35 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Expense Tracker</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav sm:bg-dark">
+                <a class="nav-link" href="/add_expense/{{name}}">Add</a>
+                <a class="nav-link" href="/expenses/{{name}}">Expenses</a>
+                <a class="nav-link" href="/">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>History</h2>
+    <div class="row">
+        <table style="margin-top: 2em;" class="table table-light">
+            <tr>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+            {{#each expenses}}
+            <tr>
+                <td>{{category}}</td>
+                <td>R{{amount}}</td>
+                <td>{{date}}</td>
+            </tr>
+            {{/each}}
+        </table>
+    </div>
+</div>
