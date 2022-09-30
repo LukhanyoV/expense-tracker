@@ -18,7 +18,10 @@ app.use(express.json())
 app.use(session({
     secret: "mycatwalkedonmykeyboard",
     resave: false,
-    saveUninitialized: false
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 30*24*60*60*1000
+    }
 }))
 app.use(flash())
 ////
@@ -44,4 +47,4 @@ app.get("/expense", isLoggedIn, routes.getExpense)
 app.get("/logout", isLoggedIn, routes.userLogout)
 
 const PORT = process.env.PORT || 5000
-app.listen(PORT, () => console.log(`🚀 App running at ${PORT}`))
+app.listen(PORT, console.log(`🚀 App running at PORT: ${PORT}`))
