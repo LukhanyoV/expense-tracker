@@ -23,21 +23,25 @@ app.use(session({
 app.use(flash())
 ////
 
+const {isLoggedIn, isNotLoggedIn} = require("./services/auth-service")()
 const expenseService = require("./services/expense-service")(db)
 const routes = require("./routes/Routes")(expenseService)
 
-app.get("/", routes.getIndex)
-app.post("/login", routes.postIndex)
+app.get("/", isNotLoggedIn, routes.getIndex)
+app.post("/login", isNotLoggedIn, routes.postIndex)
 
-app.get("/register", routes.getRegister)
-app.post("/register", routes.postRegister)
+app.get("/register", isNotLoggedIn, routes.getRegister)
+app.post("/register", isNotLoggedIn, routes.postRegister)
 
-app.get("/add_expense/:name", routes.getAddExpense)
-app.post("/add_expense/:name", routes.postAddExpense)
+app.get("/add_expense", isLoggedIn, routes.getAddExpense)
+app.post("/add_expense", isLoggedIn, routes.postAddExpense)
 
-app.get("/expenses/:name", routes.getExpenses)
-app.post("/expenses/:name", routes.postExpense)
+app.get("/expenses", isLoggedIn, routes.getExpenses)
+app.post("/expenses", isLoggedIn, routes.postExpense)
 
-app.get("/expense/:name", routes.getExpense)
+app.get("/expense", isLoggedIn, routes.getExpense)
 
-module.exports = app
+app.get("/logout", isLoggedIn, routes.userLogout)
+
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => console.log(`🚀 App running at ${PORT}`))

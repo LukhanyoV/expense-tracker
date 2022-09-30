@@ -20,7 +20,8 @@ module.exports = (expenseService) => {
                     res.redirect("back")
                 } else {
                     const user = await expenseService.findUserByEmail(email)
-                    res.redirect(`/add_expense/${user.firstname}`)
+                    req.session.user = user
+                    res.redirect(`/add_expense`)
                 }
             } catch (error) {
                 console.log(error.stack)
@@ -47,7 +48,8 @@ module.exports = (expenseService) => {
             res.redirect("back")
         },
         getAddExpense: async (req, res) => {
-            let {name} = req.params
+            const {user} = req.session
+            let {firstname: name} = user
             let categories = await expenseService.getCategories()
             let d = new Date()
             res.render("add_expense", {
@@ -68,7 +70,8 @@ module.exports = (expenseService) => {
             }
         },
         getExpenses: async (req, res) => {
-            let {name} = req.params
+            const {user} = req.session
+            let {firstname: name} = user
 
             let d = new Date()
             // last 30 days
@@ -146,7 +149,8 @@ module.exports = (expenseService) => {
             })
         },
         getExpense: async (req, res) => {
-            let {name} = req.params
+            const {user} = req.session
+            let {firstname: name} = user
 
             let d = new Date()
 
@@ -162,6 +166,10 @@ module.exports = (expenseService) => {
                     formatDate: date => new Date(date).toDateString()
                 }
             })
+        },
+        userLogout: (req, res) => {
+            req.session.destroy()
+            res.redirect("/")
         }
     }
 }
