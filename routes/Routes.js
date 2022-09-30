@@ -85,19 +85,30 @@ module.exports = (expenseService) => {
             // initialize the categories as 0
             categories.forEach(category => {
                 if(expensesMap[category.category] === undefined){
-                    expensesMap[category.category] = 0
+                    let obj = {
+                        expenses: [],
+                        amount: 0
+                    }
+                    expensesMap[category.category] = obj
                 }
             })
 
+            console.log("Map", JSON.stringify(expensesMap))
+
             // loop through the expenses and add to the map
             expenses.forEach(expense => {
-                expensesMap[expense.category] += expense.amount
+                expensesMap[expense.category].amount += expense.amount
+                expensesMap[expense.category].expenses.push(expense)
             })
 
+            console.log("Exp", JSON.stringify(expensesMap))
             res.render("expense", {
                 name,
                 expenses: expensesMap,
-                duration: `Weekely`
+                duration: `Weekely`,
+                helpers: {
+                    formatDate: date => new Date(date).toDateString()
+                }
             })
         },
         postExpense: async (req, res) => {
@@ -132,14 +143,17 @@ module.exports = (expenseService) => {
             res.render("expense", {
                 name,
                 expenses: expensesMap,
-                duration: `${n} days`
+                duration: `${n} days`,
+                helpers: {
+                    formatDate: date => new Date(date).toDateString()
+                }
             })
         },
         getExpense: async (req, res) => {
             let {name} = req.params
 
             let d = new Date()
-            // last 30 days
+
             d.setDate(d.getDate()-7)
             let date = `${d.getFullYear()}-${whole(d.getMonth()+1)}-${whole(d.getDate())}`
 
@@ -147,7 +161,10 @@ module.exports = (expenseService) => {
 
             res.render("expenses", {
                 expenses,
-                name
+                name,
+                helpers: {
+                    formatDate: date => new Date(date).toDateString()
+                }
             })
         }
     }

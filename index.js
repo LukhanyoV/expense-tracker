@@ -14,12 +14,14 @@ app.use(express.static(path.join(__dirname, "public")))
 app.use(express.urlencoded({extended: false}))
 app.use(express.json())
 
+///
 app.use(session({
     secret: "mycatwalkedonmykeyboard",
     resave: false,
     saveUninitialized: false
 }))
 app.use(flash())
+////
 
 const expenseService = require("./services/expense-service")(db)
 const routes = require("./routes/Routes")(expenseService)

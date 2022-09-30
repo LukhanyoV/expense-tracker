@@ -25,10 +25,29 @@
         {{#each expenses}}
         <tr>
             <td>
-                <h4>{{@key}}</h4>
+                <button type="button" class="btn btn-primary" data-bs-toggle="collapse"
+                    data-bs-target="#{{@key}}">{{@key}}</button>
+                {{#if this.expenses}}
+                <div id="{{@key}}" class="collapse">
+                    <table style="margin-top: 2em;" class="table table-light">
+                        <tr>
+                            <th>Category</th>
+                            <th>Amount</th>
+                            <th>Date</th>
+                        </tr>
+                        {{#each this.expenses}}
+                        <tr>
+                            <td>{{category}}</td>
+                            <td>R{{amount}}</td>
+                            <td>{{formatDate date}}</td>
+                        </tr>
+                        {{/each}}
+                    </table>
+                </div>
+                {{/if}}
             </td>
             <td>
-                <h4>R{{this}}</h4>
+                <h4>R{{this.amount}}</h4>
             </td>
         </tr>
         {{/each}}
