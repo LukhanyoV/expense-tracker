@@ -130,13 +130,17 @@ module.exports = (expenseService) => {
             // initialize the categories as 0
             categories.forEach(category => {
                 if(expensesMap[category.category] === undefined){
-                    expensesMap[category.category] = 0
+                    let obj = {
+                        expenses: [],
+                        amount: 0
+                    }
+                    expensesMap[category.category] = obj
                 }
             })
-
             // loop through the expenses and add to the map
             expenses.forEach(expense => {
-                expensesMap[expense.category] += expense.amount
+                expensesMap[expense.category].amount += expense.amount
+                expensesMap[expense.category].expenses.push(expense)
             })
 
             res.render("expense", {
