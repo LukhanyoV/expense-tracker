@@ -92,16 +92,12 @@ module.exports = (expenseService) => {
                     expensesMap[category.category] = obj
                 }
             })
-
-            console.log("Map", JSON.stringify(expensesMap))
-
             // loop through the expenses and add to the map
             expenses.forEach(expense => {
                 expensesMap[expense.category].amount += expense.amount
                 expensesMap[expense.category].expenses.push(expense)
             })
 
-            console.log("Exp", JSON.stringify(expensesMap))
             res.render("expense", {
                 name,
                 expenses: expensesMap,
