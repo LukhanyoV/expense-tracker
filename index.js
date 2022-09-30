@@ -16,6 +16,9 @@ app.use(express.json())
 
 ///
 app.use(session({
+    store: new (require('connect-pg-simple')(session))({
+        pgPromise: db
+    }),
     secret: "mycatwalkedonmykeyboard",
     resave: false,
     saveUninitialized: true,
