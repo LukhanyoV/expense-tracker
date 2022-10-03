@@ -5,7 +5,7 @@ const flash = require("express-flash")
 const path = require("path")
 const app = express()
 
-const db = require("./config")
+const db = require("./config/index")
 
 app.engine("handlebars", exphbs.engine({defaultLayout: "main"}))
 app.set("view engine", "handlebars")
@@ -49,5 +49,4 @@ app.get("/expense", isLoggedIn, routes.getExpense)
 
 app.get("/logout", isLoggedIn, routes.userLogout)
 
-const PORT = process.env.PORT || 5000
-app.listen(PORT, console.log(`🚀 App running at PORT: ${PORT}`))
+module.exports = app
