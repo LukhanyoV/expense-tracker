@@ -2,7 +2,7 @@ const ShortUniqueId = require("short-unique-id")
 const uid = new ShortUniqueId({ length: 10 });
 
 module.exports = (expenseService) => {
-    const whole = n => n>10?n:"0"+n
+    const whole = n => n>=10?n:"0"+n
     return {
         getIndex: (req, res) => {
             res.render("index")
@@ -60,8 +60,13 @@ module.exports = (expenseService) => {
         },
         postAddExpense: async (req, res) => {
             try {
-                await expenseService.addNewExpense(req.body)
-                req.flash("success", "Expense has been added")
+                let verify = Object.values(req.body)
+                if(verify.length !== 3){
+                    req.flash("error", "Please fill in all the fields")
+                } else {
+                    await expenseService.addNewExpense({...req.body, email: req.session.user.email})
+                    req.flash("success", "Expense has been added")
+                }
             } catch (error) {
                 console.log(error.stack)
                 req.flash("error", "An error occured while adding expense")
@@ -71,14 +76,14 @@ module.exports = (expenseService) => {
         },
         getExpenses: async (req, res) => {
             const {user} = req.session
-            let {firstname: name} = user
+            let {email} = user
 
             let d = new Date()
-            // last 30 days
+
             d.setDate(d.getDate()-7)
             let date = `${d.getFullYear()}-${whole(d.getMonth()+1)}-${whole(d.getDate())}`
 
-            let expenses = await expenseService.getExpenses(name, date)
+            let expenses = await expenseService.getExpenses(email, date)
             // get the categories
             let categories = await expenseService.getCategories()
 
@@ -102,7 +107,6 @@ module.exports = (expenseService) => {
             })
 
             res.render("expense", {
-                name,
                 expenses: expensesMap,
                 duration: `Weekely`,
                 helpers: {
@@ -111,7 +115,10 @@ module.exports = (expenseService) => {
             })
         },
         postExpense: async (req, res) => {
-            let {name, days: n} = req.body
+            const {user} = req.session
+            let {email} = user
+
+            let {days: n} = req.body
             let d = new Date()
 
             // last n days
@@ -120,7 +127,7 @@ module.exports = (expenseService) => {
             let date = `${d.getFullYear()}-${whole(d.getMonth()+1)}-${whole(d.getDate())}`
 
             // get the expenses
-            let expenses = await expenseService.getExpenses(name, date)
+            let expenses = await expenseService.getExpenses(email, date)
             // get the categories
             let categories = await expenseService.getCategories()
 
@@ -144,7 +151,6 @@ module.exports = (expenseService) => {
             })
 
             res.render("expense", {
-                name,
                 expenses: expensesMap,
                 duration: `${n} days`,
                 helpers: {
@@ -154,18 +160,17 @@ module.exports = (expenseService) => {
         },
         getExpense: async (req, res) => {
             const {user} = req.session
-            let {firstname: name} = user
+            let {email} = user
 
             let d = new Date()
 
-            d.setDate(d.getDate()-7)
+            d.setDate(d.getDate()-30)
             let date = `${d.getFullYear()}-${whole(d.getMonth()+1)}-${whole(d.getDate())}`
 
-            let expenses = await expenseService.getExpenses(name, date)
+            let expenses = await expenseService.getExpenses(email, date)
 
             res.render("expenses", {
                 expenses,
-                name,
                 helpers: {
                     formatDate: date => new Date(date).toDateString()
                 }
