@@ -27,11 +27,10 @@
             <p class="text-danger flash">{{messages.error}}</p>
             {{/if}}
             <form method="post">
-                <input type="hidden" name="name" value="{{name}}">
                 <div class="col-12">
                     <label for="category" class="text-left">Category</label>
-                    <select name="category" id="category" required>
-                        <option value="none" selected disabled>--categories--</option>
+                    <select name="category" id="category">
+                        <option value="none" selected disabled required>--categories--</option>
                         {{#each categories}}
                         <option value="{{id}}">{{category}}</option>
                         {{/each}}
