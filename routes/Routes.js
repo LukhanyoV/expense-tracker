@@ -68,14 +68,14 @@ module.exports = (expenseService) => {
                 } else {
                     let check = true
                     let today = new Date(req.body.date)
-                    let yesterday = new Date(today.setDate(today.getDate()))
+                    let yesterday = new Date(today.setDate(today.getDate()-1))
                     if(today.getDay() != 0){
                         // check if an entry was made yesterday
                         check = await expenseService.checkYesterday(formatDate(yesterday), req.session.user.id)
                     }
                     if(check === null){
                         console.log(yesterday.getDay())
-                        req.flash("error", "Missing entry for yesterday")
+                        req.flash("error", "Missing entry for "+formatDate(yesterday))
                     } else {
                         await expenseService.addNewExpense({...req.body, email: req.session.user.email})
                         req.flash("success", "Expense has been added")
