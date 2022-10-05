@@ -1,8 +1,9 @@
 const ShortUniqueId = require("short-unique-id")
 const uid = new ShortUniqueId({ length: 10 });
 
+const {lastSunday, nextSaturday, formatDate} = require("./dates.js")()
+
 module.exports = (expenseService) => {
-    const whole = n => n>=10?n:"0"+n
     return {
         getIndex: (req, res) => {
             res.render("index")
@@ -55,7 +56,8 @@ module.exports = (expenseService) => {
             res.render("add_expense", {
                 name,
                 categories,
-                maxDate: `${d.getFullYear()}-${whole(d.getMonth()+1)}-${whole(d.getDate())}`
+                minDate: formatDate(lastSunday(d)),
+                maxDate: formatDate(nextSaturday(d))
             })
         },
         postAddExpense: async (req, res) => {
@@ -81,7 +83,7 @@ module.exports = (expenseService) => {
             let d = new Date()
 
             d.setDate(d.getDate()-7)
-            let date = `${d.getFullYear()}-${whole(d.getMonth()+1)}-${whole(d.getDate())}`
+            let date = formatDate(d)
 
             let expenses = await expenseService.getExpenses(email, date)
             // get the categories
@@ -124,7 +126,7 @@ module.exports = (expenseService) => {
             // last n days
             d.setDate(d.getDate()-(n||30))
 
-            let date = `${d.getFullYear()}-${whole(d.getMonth()+1)}-${whole(d.getDate())}`
+            let date = formatDate(d)
 
             // get the expenses
             let expenses = await expenseService.getExpenses(email, date)
@@ -165,7 +167,7 @@ module.exports = (expenseService) => {
             let d = new Date()
 
             d.setDate(d.getDate()-30)
-            let date = `${d.getFullYear()}-${whole(d.getMonth()+1)}-${whole(d.getDate())}`
+            let date = formatDate(d)
 
             let expenses = await expenseService.getExpenses(email, date)
 
