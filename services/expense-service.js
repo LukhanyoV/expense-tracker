@@ -32,12 +32,17 @@ module.exports = (db) => {
         return await db.manyOrNone("SELECT category, amount, date FROM expenses AS e INNER JOIN users AS u ON u.id = e.user_id INNER JOIN categories AS c ON c.id = e.category_id WHERE e.user_id = $1 AND e.date >= $2 ORDER BY e.date DESC", [user.id, date])
     }
 
+    const checkYesterday = async (yesterday, user_id) => {
+        return await db.oneOrNone("SELECT * FROM expenses WHERE date = $1 AND user_id = $2", [yesterday, user_id])
+    }
+
     return {
         findUserByEmail,
         loginUser,
         createNewUser,
         addNewExpense,
         getCategories,
-        getExpenses
+        getExpenses,
+        checkYesterday
     }
 }
