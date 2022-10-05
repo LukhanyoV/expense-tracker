@@ -66,8 +66,20 @@ module.exports = (expenseService) => {
                 if(verify.length !== 3){
                     req.flash("error", "Please fill in all the fields")
                 } else {
-                    await expenseService.addNewExpense({...req.body, email: req.session.user.email})
-                    req.flash("success", "Expense has been added")
+                    let check = true
+                    let today = new Date(req.body.date)
+                    let yesterday = new Date(today.setDate(today.getDate()))
+                    if(today.getDay() != 0){
+                        // check if an entry was made yesterday
+                        check = await expenseService.checkYesterday(formatDate(yesterday), req.session.user.id)
+                    }
+                    if(check === null){
+                        console.log(yesterday.getDay())
+                        req.flash("error", "Missing entry for yesterday")
+                    } else {
+                        await expenseService.addNewExpense({...req.body, email: req.session.user.email})
+                        req.flash("success", "Expense has been added")
+                    }
                 }
             } catch (error) {
                 console.log(error.stack)
