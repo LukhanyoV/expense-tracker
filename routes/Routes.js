@@ -53,6 +53,7 @@ module.exports = (expenseService) => {
             let {firstname: name} = user
             let categories = await expenseService.getCategories()
             let d = new Date()
+
             res.render("add_expense", {
                 name,
                 categories,
@@ -63,23 +64,19 @@ module.exports = (expenseService) => {
         postAddExpense: async (req, res) => {
             try {
                 let verify = Object.values(req.body)
+                let today = new Date(req.body.date)
+                let check = today.getDay() == 0
+                let yesterday = new Date(today.setDate(today.getDate()-1))
+                // sunday is the start of the week do not check
+                let condition = await expenseService.checkYesterday(formatDate(yesterday), req.session.user.id)
+
                 if(verify.length !== 3){
                     req.flash("error", "Please fill in all the fields")
+                } else if(condition.length == 0 && !check) {
+                    req.flash("error", "Missing entry for "+formatDate(yesterday))
                 } else {
-                    let check = true
-                    let today = new Date(req.body.date)
-                    let yesterday = new Date(today.setDate(today.getDate()-1))
-                    if(today.getDay() != 0){
-                        // check if an entry was made yesterday
-                        check = await expenseService.checkYesterday(formatDate(yesterday), req.session.user.id)
-                    }
-                    if(check === null){
-                        console.log(yesterday.getDay())
-                        req.flash("error", "Missing entry for "+formatDate(yesterday))
-                    } else {
-                        await expenseService.addNewExpense({...req.body, email: req.session.user.email})
-                        req.flash("success", "Expense has been added")
-                    }
+                    await expenseService.addNewExpense({...req.body, email: req.session.user.email})
+                    req.flash("success", "Expense has been added")
                 }
             } catch (error) {
                 console.log(error.stack)

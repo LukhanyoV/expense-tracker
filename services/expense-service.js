@@ -33,7 +33,7 @@ module.exports = (db) => {
     }
 
     const checkYesterday = async (yesterday, user_id) => {
-        return await db.oneOrNone("SELECT * FROM expenses WHERE date = $1 AND user_id = $2", [yesterday, user_id])
+        return await db.manyOrNone("SELECT * FROM expenses WHERE date = $1 AND user_id = $2", [yesterday, user_id])
     }
 
     return {
