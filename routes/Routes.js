@@ -187,6 +187,41 @@ module.exports = (expenseService) => {
                 }
             })
         },
+        getChart: async (req, res) => {
+            const {user} = req.session
+            let {email} = user
+
+            let d = new Date()
+
+            d.setDate(d.getDate()-30)
+            let date = formatDate(d)
+
+            let expenses = await expenseService.getExpenses(email, date)
+            // get the categories
+            let categories = await expenseService.getCategories()
+
+            // map the expenses
+            let expensesMap = {}
+
+            // initialize the categories as 0
+            categories.forEach(category => {
+                if(expensesMap[category.category] === undefined){
+                    let obj = {
+                        expenses: [],
+                        amount: 0
+                    }
+                    expensesMap[category.category] = obj
+                }
+            })
+            // loop through the expenses and add to the map
+            expenses.forEach(expense => {
+                expensesMap[expense.category].amount += expense.amount
+                expensesMap[expense.category].expenses.push(expense)
+            })
+            res.render("chart", {
+                expensesMap: JSON.stringify(expensesMap)
+            })
+        },
         userLogout: (req, res) => {
             req.session.destroy()
             res.redirect("/")

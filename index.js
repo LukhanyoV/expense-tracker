@@ -47,6 +47,8 @@ app.post("/expenses", isLoggedIn, routes.postExpense)
 
 app.get("/expense", isLoggedIn, routes.getExpense)
 
+app.get("/expensechart", isLoggedIn, routes.getChart)
+
 app.get("/logout", isLoggedIn, routes.userLogout)
 
 // deta

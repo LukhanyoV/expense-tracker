@@ -63,3 +63,12 @@ body {
   font-size: 75px;
   color: #4b6cb7;
 }
+
+.chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: white;
+  height: 80vh;
+}
