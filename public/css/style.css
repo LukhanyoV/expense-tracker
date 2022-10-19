@@ -72,3 +72,28 @@ body {
   background-color: white;
   height: 80vh;
 }
+
+.expense-type {
+  display: flex;
+}
+
+.expense-type > div{
+  margin: 5px;
+  padding: 10px;
+  background-color: transparent;
+  border: 1px solid gray;
+  cursor: pointer;
+}
+.expense-type > div:hover{
+  background: grey;
+  color: white;
+}
+
+.expense-type > div > a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.expense-type > div > a:visited {
+  color: inherit;
+}

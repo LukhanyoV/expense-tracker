@@ -17,12 +17,22 @@
 </nav>
 
 <div class="chart">
-    <h1>Monthly Expense Visualisation</h1>
+    <h1>{{duration}} Expense Visualisation</h1>
+    <div class="expense-type">
+        <div>
+            <a href="/expensechart/weekly">Weekly</a>
+        </div>
+        <div>
+            <a href="/expensechart">Monthly</a>
+        </div>
+    </div>
     <canvas id="myChart" width="400" height="100vh" style="height: 200px; width: 200px"></canvas>
     <script>
-        const expensesMap = {{{expensesMap}}}
+        const expensesMap = {{{ expensesMap }}}
+        console.log(expensesMap)
         const labels = Object.keys(expensesMap)
         const data = Object.values(expensesMap).map(item => item.amount)
+        const average = Object.values(expensesMap).map(item => item.average)
     </script>
     <script>
         const ctx = document.getElementById('myChart').getContext('2d');
@@ -33,22 +43,14 @@
                 datasets: [{
                     label: 'Expenses by Category',
                     data,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
+                    backgroundColor: "tomato",
+                    borderColor: "red",
+                    borderWidth: 1
+                },
+                {
+                    label: 'Average by Category',
+                    data: average,
+                    backgroundColor: "blue",
                     borderWidth: 1
                 }]
             },

@@ -3,6 +3,14 @@ const uid = new ShortUniqueId({ length: 10 });
 
 const {lastSunday, nextSaturday, formatDate} = require("./dates.js")()
 
+const calculateAvg = items => {
+    let avg = 0;
+    for(const item of items){
+        avg += item.amount
+    }
+    return avg / items.length
+}
+
 module.exports = (expenseService) => {
     return {
         getIndex: (req, res) => {
@@ -208,7 +216,8 @@ module.exports = (expenseService) => {
                 if(expensesMap[category.category] === undefined){
                     let obj = {
                         expenses: [],
-                        amount: 0
+                        amount: 0,
+                        average: 0
                     }
                     expensesMap[category.category] = obj
                 }
@@ -217,9 +226,49 @@ module.exports = (expenseService) => {
             expenses.forEach(expense => {
                 expensesMap[expense.category].amount += expense.amount
                 expensesMap[expense.category].expenses.push(expense)
+                expensesMap[expense.category].average = calculateAvg(expensesMap[expense.category].expenses)
             })
             res.render("chart", {
-                expensesMap: JSON.stringify(expensesMap)
+                expensesMap: JSON.stringify(expensesMap),
+                duration: "Monthly"
+            })
+        },
+        getWeekChart: async (req, res) => {
+            const {user} = req.session
+            let {email} = user
+
+            let d = new Date()
+
+            d.setDate(d.getDate()-7)
+            let date = formatDate(d)
+
+            let expenses = await expenseService.getExpenses(email, date)
+            // get the categories
+            let categories = await expenseService.getCategories()
+
+            // map the expenses
+            let expensesMap = {}
+
+            // initialize the categories as 0
+            categories.forEach(category => {
+                if(expensesMap[category.category] === undefined){
+                    let obj = {
+                        expenses: [],
+                        amount: 0,
+                        average: 0
+                    }
+                    expensesMap[category.category] = obj
+                }
+            })
+            // loop through the expenses and add to the map
+            expenses.forEach(expense => {
+                expensesMap[expense.category].amount += expense.amount
+                expensesMap[expense.category].expenses.push(expense)
+                expensesMap[expense.category].average = calculateAvg(expensesMap[expense.category].expenses)
+            })
+            res.render("chart", {
+                expensesMap: JSON.stringify(expensesMap),
+                duration: "Weekly"
             })
         },
         userLogout: (req, res) => {

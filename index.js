@@ -49,11 +49,13 @@ app.get("/expense", isLoggedIn, routes.getExpense)
 
 app.get("/expensechart", isLoggedIn, routes.getChart)
 
+app.get("/expensechart/weekly", isLoggedIn, routes.getWeekChart)
+
 app.get("/logout", isLoggedIn, routes.userLogout)
 
 // deta
 module.exports = app
 
 // heroku and local
-// const PORT = process.env.PORT || 5000
-// app.listen(PORT, console.log(`🚀 App now running at PORT: ${PORT}`))
+const PORT = process.env.PORT || 5000
+app.listen(PORT, console.log(`🚀 App now running at PORT: ${PORT}`))
